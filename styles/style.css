@@ -1,0 +1,94 @@
+.hidden {
+  display: none !important;
+  border: none !important;
+}
+
+.active {
+}
+
+.highlighted {
+  background-color: #A0A0A0;
+}
+
+*{
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+html {
+  background:#2d2d2d;
+  background:#181a1b;
+}
+
+body{
+  padding: 0 20px;
+}
+
+.searchBox{
+  position: relative;
+  margin: 150px auto;
+  max-width: 450px;
+  height: 35px;
+}
+
+.searchBar{
+  height: 100%;
+  font-size: 16px;
+}
+
+.searchBar button{
+  height: 100%;
+  border: 1px solid #2d2d2d;
+  border-left: none;
+  background-color:#1a1c1d;
+  color: white;
+  position: absolute;
+  width: 10%;
+  cursor: pointer;
+}
+
+.searchBar button img{
+  height: 70%;
+  padding-top: 5px;
+}
+
+.searchBar input {
+  width: 90%;
+  outline: none;
+  height: 100%;
+  padding: 8px 16px;
+  background-color:#1a1c1d;
+  color: white;
+  border: 1px solid #2d2d2d;
+}
+
+.searchBox input:focus {
+  border: 1px solid #1c62b9;
+}
+
+
+#suggestionBox {
+  font-size: 20px;
+  color: #D2D2D2;
+  margin: 0;
+  list-style: none;
+  border-top: none !important;
+  border: 1px solid #666;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #5A5A5A;
+}
+
+#suggestionBox li{
+  padding: 0;
+  cursor: default;
+  color: black;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 4px;
+}
+
+#suggestionBox li:hover{
+  background-color: #A0A0A0;
+}
