@@ -1,97 +1,115 @@
-//document.getElementById('query').addEventListener( 'keydown', ( event ) => 
 const mod = (n, m) => (n % m + m) % m;
-var DOWN = 1;
-var UP = -1;
+const query = document.getElementById('query');
+const button = document.querySelector('.searchBox button');
+const searchBox = document.querySelector('.searchBox');
+const suggestionBoxItems = document.querySelectorAll('#suggestionBox > li');
+const suggestionBox = document.querySelector('#suggestionBox');
+let activeSuggestionBoxItems;
+const DOWN = 40;//Up arrow
+const UP = 38;//Down arrow
+const NOT_SELECTED = -1;//Down arrow
+let selected = NOT_SELECTED;
+let filter;
 
-let selected = -1;
-document.getElementById('query').addEventListener('focusout', function(){focusedOut(event)});
-function focusedOut(event){
-    suggetionBoxItems = document.querySelectorAll('#suggestionBox > li');
-    suggetionBox = document.querySelector('#suggestionBox');
-    suggetionBox.classList.add('hidden');
-    if(selected != -1){
-      suggetionBoxItems[selected].classList.remove('highlighted');
-      selected = -1;
-    }
+query.addEventListener('focusin', function(){focusedIn(event)});
+
+query.addEventListener('keydown', function(){filterKeys(event)});
+
+query.addEventListener('keyup', function(){openSuggestionBox(event)});
+
+button.addEventListener('click' , function(){search(event)});
+function search(event) {
+    location = "./display.php?f=" + query.value;
 }
 
-document.getElementById('query').addEventListener('focusin', function(){focusedIn(event)});
+document.addEventListener('click', function(event) {
+  const outsideClick = !searchBox.contains(event.target);
+  if(outsideClick)
+    hideSuggestionBox(event);
+});
+
+suggestionBoxItems.forEach(element => {
+  element.addEventListener('click', function(){
+    console.log("clicked");
+    location = "./display.php?f=" + element.innerHTML;
+  });
+});
+
+function chageHighlightedLi(direction) {
+  activeSuggestionBoxItems = suggestionBox.querySelectorAll(':scope .active');
+  if(activeSuggestionBoxItems[0] == null)
+    return;
+
+  if(selected != NOT_SELECTED)
+    activeSuggestionBoxItems[selected].classList.remove('highlighted');
+
+  if(direction == UP)
+    selected = mod(((selected+1) - 1), activeSuggestionBoxItems.length + 1) - 1;
+  if(direction == DOWN)
+    selected = mod(((selected+1) + 1), activeSuggestionBoxItems.length + 1) - 1;
+
+  if(selected != NOT_SELECTED)
+    activeSuggestionBoxItems[selected].classList.add('highlighted');
+  if(selected != NOT_SELECTED){
+    query.value = activeSuggestionBoxItems[selected].innerHTML;
+  }else{
+    query.value = filter;
+  }
+
+  console.log(selected);
+}
+
 function focusedIn(event) {
-  filterMenuItems(event);
+  openSuggestionBox(event);
 }
 
-document.getElementById('query').onkeydown = function(){filterKeys(event)};
 function filterKeys(event){
-  //console.log("Key Pressed");
-  //console.log(event.currentTarget);
-
   switch (event.key) {
     case 'Enter':
-      console.log(location);
-      scope = document.querySelector('#suggestionBox');
-      suggetionBoxItem = scope.querySelector(':scope .active');
-      if(suggetionBoxItem != null){
-        console.log(suggetionBoxItem.querySelector(':scope a').text);
-        location = "./display.php?f=" + suggetionBoxItem.querySelector(':scope a').text
-      }
+        location = "./display.php?f=" + query.value;
       break;
     case "ArrowUp":
       event.preventDefault();
-      selectLi(UP);
+      chageHighlightedLi(UP);
       break;
     case "ArrowDown":
       event.preventDefault();
-      selectLi(DOWN);
+      chageHighlightedLi(DOWN);
       break;
   }
-  console.log(selected);
 }
-function selectLi(direction) {
-  scope = document.querySelector('#suggestionBox');
-  suggetionBoxItems = scope.querySelectorAll(':scope .active');
-  if(suggetionBoxItems[0] == null)
+
+function openSuggestionBox(event){
+  if(event.key == "ArrowUp" || event.key == "ArrowDown")
     return;
-  if(selected != -1){
-    suggetionBoxItems[selected].classList.remove('highlighted');
-    selected = mod((selected + direction), suggetionBoxItems.length);
-    suggetionBoxItems[selected].classList.add('highlighted');
-  }else{
-    if(direction == UP){
-      selected = suggetionBoxItems.length - 1; //-1
-    }else{//DOWN
-      selected = 0; //1
-    }
-    suggetionBoxItems[selected].classList.add('highlighted');
-  }
-}
-
-
-document.getElementById('query').onkeyup = function(){filterMenuItems(event)};
-function filterMenuItems(event){
   filter = event.target.value;
-  //console.log(filter);
+
   let NumberOfActiveElements = 0;
-  suggetionBoxItems = document.querySelectorAll('#suggestionBox > li');
-  suggetionBox = document.querySelector('#suggestionBox');
-    for(const suggetionBoxItem of suggetionBoxItems){
-      const textContent = suggetionBoxItem.textContent.trim().toUpperCase();
+
+    for(const suggestionBoxItem of suggestionBoxItems){
+      const textContent = suggestionBoxItem.textContent.trim().toUpperCase();
 
       if(textContent.indexOf(filter.toUpperCase()) > -1 && NumberOfActiveElements<10 && filter!="" || filter=="*"){
-        suggetionBox.classList.remove('hidden');
-        suggetionBoxItem.classList.remove('hidden');
-        suggetionBoxItem.classList.add('active');
+        suggestionBoxItem.classList.remove('hidden');
+        suggestionBoxItem.classList.add('active');
 
         NumberOfActiveElements += 1;
       }else{
-        suggetionBoxItem.classList.add('hidden');
-        suggetionBoxItem.classList.remove('active');
+        suggestionBoxItem.classList.add('hidden');
+        suggestionBoxItem.classList.remove('active');
       }
     }
   if(NumberOfActiveElements == 0){
-    suggetionBox.classList.add('hidden');
-    if(selected != -1){
-      suggetionBoxItems[selected].classList.remove('highlighted');
-      selected = -1;
-    }
+    hideSuggestionBox();
+  }else{
+    suggestionBox.classList.remove('hidden');
+  }
+}
+
+function hideSuggestionBox() {
+  suggestionBox.classList.add('hidden');
+  if(selected != NOT_SELECTED){
+    activeSuggestionBoxItems[selected].classList.remove('highlighted');
+    selected = NOT_SELECTED;
   }
 }
