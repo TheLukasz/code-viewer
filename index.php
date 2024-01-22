@@ -30,6 +30,6 @@
       </div>
   </div>
 
-  <script src="./js/script-2.js"></script>
+  <script src="./js/script.js"></script>
 </body>
 </html>
